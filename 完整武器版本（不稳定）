@@ -1,0 +1,47 @@
+EnablePrimaryMouseButtonEvents(true)
+
+--AK压枪量：32移动 60延迟
+--M4压枪量：20移动 60延迟
+--白虎压枪量：15移动 时间800
+--EVO 动力压枪量：500时间 13移动
+--FAMAS压枪量： 16移动 时间700
+--QBZ191 压枪量： 16移动 时间750
+--HK417压枪量： 与M4类似，但不如速点宏
+
+local recoilEnabled = false    -- 压枪状态开关
+
+function OnEvent(event, arg)
+    -- 侧键按下事件（开启或关闭压枪）
+    if event == "MOUSE_BUTTON_PRESSED" and arg == 6 then
+        recoilEnabled = not recoilEnabled  -- 切换状态
+        OutputLogMessage("压枪模式：%s\n", recoilEnabled and "开启" or "关闭")
+    end
+
+    local movey = 0
+    local movex = 0
+    local startTime
+    
+    if recoilEnabled then
+        while IsMouseButtonPressed(1) do
+            if startTime == nil then
+                startTime = GetRunningTime()
+            end
+
+            local currentTime = GetRunningTime() - startTime
+
+            if currentTime <= 1000 then
+                movey = 23
+                movex = 0
+            else
+                movey = 0
+                movex = 0
+            end
+
+            MoveMouseRelative(movex, movey)
+            OutputLogMessage("执行压枪：movex=%d, movey=%d\n", movex, movey)  -- 调试输出 
+            Sleep(60)  -- 控制执行频率，避免过快执行
+        end
+
+        -- Check if the recoilEnabled state has been toggled off
+    end
+end
