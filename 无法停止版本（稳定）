@@ -1,0 +1,49 @@
+EnablePrimaryMouseButtonEvents(true)
+
+--AK压枪量：
+--M4压枪量：
+--白虎压枪量：
+--AK103压枪量：
+
+local recoilEnabled = false    -- 压枪状态开关
+
+function OnEvent(event, arg)
+    -- 侧键按下事件（开启或关闭压枪）
+    if event == "MOUSE_BUTTON_PRESSED" and arg == 6 then
+        recoilEnabled = not recoilEnabled  -- 切换状态
+        OutputLogMessage("压枪模式：%s\n", recoilEnabled and "开启" or "关闭")
+    end
+
+    local movey = 0
+    local movex = 0
+    local startTime
+    
+    while recoilEnabled do
+        if IsMouseButtonPressed(1) then
+            if startTime == nil then
+                startTime = GetRunningTime()
+            end
+
+            local currentTime = GetRunningTime() - startTime
+
+            if currentTime <= 700 then
+                movey = 15
+                movex = 0
+            elseif currentTime <= 1200 then
+                movey = 0
+                movex = -8
+            else
+                movey = 0
+                movex = 0
+            end
+
+            MoveMouseRelative(movex, movey)
+            OutputLogMessage("执行压枪：movex=%d, movey=%d\n", movex, movey)  -- 调试输出 
+            Sleep(90)  -- 控制执行频率，避免过快执行
+        else
+            startTime = nil  -- Reset start time when the button is released
+        end
+
+        -- Check if the recoilEnabled state has been toggled off
+    end
+end
