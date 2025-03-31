@@ -9,7 +9,7 @@ local recoilEnabled = false    -- 压枪状态开关
 
 function OnEvent(event, arg)
     -- 侧键按下事件（开启或关闭压枪）
-    if event == "MOUSE_BUTTON_PRESSED" and arg == 6 then
+    if event == "MOUSE_BUTTON_PRESSED" and arg == 6 then  --按G6键开启，如果其他键可以自行修改数字
         recoilEnabled = not recoilEnabled  -- 切换状态
         OutputLogMessage("压枪模式：%s\n", recoilEnabled and "开启" or "关闭")
     end
@@ -26,12 +26,9 @@ function OnEvent(event, arg)
 
             local currentTime = GetRunningTime() - startTime
 
-            if currentTime <= 700 then
-                movey = 15
-                movex = 0
-            elseif currentTime <= 1200 then
-                movey = 0
-                movex = -8
+            if currentTime <= 700 then  --700是压枪时间，可以自行调整
+                movey = 15  --15是垂直压枪量，可以自行调整
+                movex = 0  --0是水平压枪量，可以自行调整
             else
                 movey = 0
                 movex = 0
@@ -39,7 +36,7 @@ function OnEvent(event, arg)
 
             MoveMouseRelative(movex, movey)
             OutputLogMessage("执行压枪：movex=%d, movey=%d\n", movex, movey)  -- 调试输出 
-            Sleep(90)  -- 控制执行频率，避免过快执行
+            Sleep(90)  -- 控制执行频率，避免过快执行，时间间隔可以自行修改，50-100之间比较安全
         else
             startTime = nil  -- Reset start time when the button is released
         end
